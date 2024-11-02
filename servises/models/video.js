@@ -1,7 +1,7 @@
 const { database } = require("../connection/database"); // Import your Sequelize instance
 const { DataTypes, Sequelize } = require('sequelize');
 // const product = require('./product');
-const videothumnail = require('./videothumnail');
+// const videothumnail = require('./videothumnail');
 
 const video = database.define('video', {
   video_id: {
@@ -35,18 +35,18 @@ const video = database.define('video', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Videothumnail_id: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: videothumnail,
-      key: 'Videothumnail_id'
-    }
-  }
+  // Videothumnail_id: {
+  //   type: DataTypes.INTEGER,
+  //   references: {
+  //     model: videothumnail,
+  //     key: 'Videothumnail_id'
+  //   }
+  // }
 })
 
 // Videothumnail.belongsTo(Video, { foreignKey: 'video_id' });
 
 module.exports = video;
 
-videothumnail.hasMany(video, { foreignKey: 'Videothumnail_id' })
-video.hasMany(videothumnail, { foreignKey: 'Videothumnail_id' })
+// videothumnail.hasMany(video, { foreignKey: 'Videothumnail_id' })
+// video.hasMany(videothumnail, { foreignKey: 'Videothumnail_id' })

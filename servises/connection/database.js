@@ -1,7 +1,7 @@
 const PORT = 8000
-const DB_NAME='avvika'
+const DB_NAME=`avikka`
 const DB_USER='root'
-const DB_PASS='root'
+const DB_PASS='Apoorv'
 const DB_HOST='localhost'
 
 const { Sequelize } = require('sequelize')

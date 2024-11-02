@@ -12,45 +12,45 @@ const products = database.define('products', {
 
     product_categories: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
 
     brand_name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
 
     brand_id: {
         type: DataTypes.INTEGER, // Update data type to match the primary key of the 'brand' table
-        allowNull: false,
+        allowNull: true,
     },
 
     place:{
         type:DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
 
     product_title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true,
     },
     product_description: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: true,
     },
     product_price: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true,
 
     },
     product_thumnail_img: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true,
 
     },
     product_ad: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: true,
     },
     count_in_stock:{
         type:DataTypes.INTEGER,
@@ -60,35 +60,50 @@ const products = database.define('products', {
     },
     offer: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
     },
     rating:{
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
 
     },
     discount:{
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
 
     },
     ideal_for: {
         type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
-        allowNull: true
+        allowNull: true,
     },
     product_work_for: {
         type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
-        allowNull: true
+        allowNull: true,
     },
     highlights:{
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
 
     },
     product_expiry_date:{
         type: DataTypes.STRING,
-        allowNull: false
-
+        allowNull: true,
+    },
+    product_all_img:{
+        type: DataTypes.JSON,
+        allowNull: true  
+    },
+    lens_type:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    frem_type:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    gender:{
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     createdAt: {
         type: DataTypes.DATE,

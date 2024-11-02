@@ -216,58 +216,77 @@ const storage = multer.diskStorage({
     },
 });
 
+
+
 const upload = multer({ storage: storage });
 
 const Addproduct = async (req, res) => {
     try {
-        upload.fields([{ name: 'product_thumnail_img', maxCount: 10 }, { name: 'ideal_for_img', maxCount: 10 }, { name: 'work_for_img', maxCount: 1 }])(req, res, (err) => {
+        upload.fields([{ name: 'product_all_img', maxCount: 10 }, { name: 'product_thumnail_img', maxCount: 10 }, { name: 'ideal_for_img', maxCount: 10 }, { name: 'work_for_img', maxCount: 1 }])(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({ message: 'File upload failed' });
             }
 
+            // new update
             // Access the uploaded files via req.files
-            //   const productImage = req.files['product_img'][0];
-            const thumbnailImage = req.files['product_thumnail_img'][0];
-            const ideal_for_img = req.files['ideal_for_img'][0];
-            const work_for_img = req.files['work_for_img'][0];
-            const imageUrl = `uploads/${thumbnailImage.filename}`;
-            const imageUrl_ideal_for_img = `uploads/${ideal_for_img.filename}`;
-            const imageUrl_work_for_img = `uploads/${work_for_img.filename}`
-            console.log(imageUrl_ideal_for_img, 'imageUrl_ideal_for_img')
+            const allimages = req.files['product_all_img']
+            // console.log(allimages,'allimages')
+            if (!allimages) {
+                return res.status(400).json({ message: 'No files were uploaded for product_thumbnail_img' });
+            }
 
-            const ideal_for = [];
-            ideal_for.push({
-                ideal_for_title: req.body.ideal_for_title,
-                ideal_for_img: imageUrl_ideal_for_img,
+            const allimagesUrls = allimages.map((allImage) => {
+                return `uploads/${allImage.filename}`;
             });
-            const product_work_for = [];
-            product_work_for.push({
-                work_for_title: req.body.work_for_title,
-                work_for_img: imageUrl_work_for_img
-            })
+
+            const thumbnailImage = req.files && req.files['product_thumnail_img'] ? req.files['product_thumnail_img'][0] : null;
+            const idealForImage = req.files && req.files['ideal_for_img'] ? req.files['ideal_for_img'][0] : null;
+            const workForImage = req.files && req.files['work_for_img'] ? req.files['work_for_img'][0] : null;
+
+            const imageUrl = thumbnailImage ? `uploads/${thumbnailImage.filename}` : null;
+            const imageUrlIdealFor = idealForImage ? `uploads/${idealForImage.filename}` : null;
+            const imageUrlWorkFor = workForImage ? `uploads/${workForImage.filename}` : null;
+
+            const ideal_for = idealForImage ? [{
+                ideal_for_title: req.body.ideal_for_title || '', // Empty if not provided
+                ideal_for_img: imageUrlIdealFor,
+            }] : [];
+
+            const product_work_for = workForImage ? [{
+                work_for_title: req.body.work_for_title || '', // Empty if not provided
+                work_for_img: imageUrlWorkFor,
+            }] : [];
 
             // Create a new product record in the database
-            const data = products.create({
-                product_name: req.body.product_name,
-                product_title: req.body.product_title,
-                product_description: req.body.product_description,
-                product_price: req.body.product_price,
-                // product_img: productImage.filename, // Store the selected product image
-                product_thumnail_img: imageUrl, // Store the selected thumbnail image
-                product_ad: req.body.product_ad,
-                offer: req.body.offer,
-                count_in_stock: req.body.count_in_stock,
-                rating: req.body.rating,
-                discount: req.body.discount,
-                highlights: req.body.highlights,
-                ideal_for: ideal_for,
-                product_work_for: product_work_for,
-                product_expiry_date: req.body.product_expiry_date,
-                product_categories: req.body.product_categories,
-                brand_name: req.body.brand_name,
-                brand_id: req.body.brand_id,
-                place: req.body.place,
+            const data = await products.create({
+                // new update
+                product_all_img: allimagesUrls || '', // Empty if no image is uploaded
 
+                product_name: req.body.product_name || '', // Empty if not provided
+                product_title: req.body.product_title || '',
+                product_description: req.body.product_description || '',
+                product_price: req.body.product_price || 0, // Default to 0 if not provided
+                product_thumnail_img: imageUrl || '', // Empty if no image is uploaded
+                product_ad: req.body.product_ad || false, // Default to false
+                offer: req.body.offer || '',
+                count_in_stock: req.body.count_in_stock || 0, // Default to 0
+                // new update
+                lens_type: req.body.lens_type || '',
+                frem_type: req.body.frem_type || '',
+                gender: req.body.gender || '',
+
+                // Set rating and discount to null if not provided
+                rating: req.body.rating ? req.body.rating : null,
+                discount: req.body.discount ? req.body.discount : null,
+
+                highlights: req.body.highlights || '',
+                ideal_for: ideal_for.length ? ideal_for : null, // Set to null if no data
+                product_work_for: product_work_for.length ? product_work_for : null, // Set to null if no data
+                product_expiry_date: req.body.product_expiry_date || null, // Set to null if not provided
+                product_categories: req.body.product_categories || '',
+                brand_name: req.body.brand_name || '',
+                brand_id: req.body.brand_id || null, // Nullable
+                place: req.body.place || '',
             });
 
             return res.json({ message: 'Product added successfully', data: data });
@@ -277,6 +296,7 @@ const Addproduct = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 const getproduct = async (req, res) => {
 
@@ -532,3 +552,4 @@ const fillterNewData = async (req, res) => {
 module.exports = { Addproduct, getproduct, productdetail, fillterData, productDeleteById, fillterDataget, fillterNewData }
 
 // module.exports = { productsData, getAllData, fillterData, getDataById, productDeleteById, editProductById }
+
