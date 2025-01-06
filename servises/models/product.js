@@ -105,6 +105,10 @@ const products = database.define('products', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    color: {
+        type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
+        allowNull: true,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'), // Set the default value to the current timestamp

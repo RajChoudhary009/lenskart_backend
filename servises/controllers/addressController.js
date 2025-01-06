@@ -49,15 +49,12 @@ const createAddress = async (req, res) => {
 
     try {
         // All validation passed, proceed to create the address
-
-
         const addressData = {
             pincode,
             city,
             state,
             house_flat_office_no,
             address,
-
             contact_name,
             mobile_num,
             address_type,
@@ -88,7 +85,7 @@ const getalladdressinfo = async (req, res) => {
             mobile_num: mobileNo
         }
     });
-    console.log(addressinfo,'addressinfoaddressinfoaddressinfo')
+    // console.log(addressinfo,'addressinfoaddressinfoaddressinfo')
     const user_id = addressinfo.user_id;
 
 
@@ -217,10 +214,129 @@ const removeaddress = async (req, res) => {
     }
 }
 
+const createOrUpdateAddress = async (req, res) => {
+    const mobileNo = req.user.mobile_num; // Assuming `req.user` contains authenticated user info
+
+    try {
+        // Find the user based on their mobile number
+        const userInfo = await registration.findOne({
+            where: { mobile_num: mobileNo }
+        });
+
+        if (!userInfo) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        const userId = userInfo.user_id; // Get the user's ID
+
+        // Destructure the incoming request body
+        const {
+            addresses_id, // The ID of the address to update (optional)
+            pincode,
+            city,
+            state,
+            house_flat_office_no,
+            address,
+            contact_name,
+            mobile_num,
+            address_type,
+            landmark // Optional field
+        } = req.body;
+
+        // Validate required fields
+        if (
+            !pincode ||
+            !city ||
+            !state ||
+            !house_flat_office_no ||
+            !address ||
+            !contact_name ||
+            !mobile_num ||
+            !address_type
+        ) {
+            return res.status(400).json({ error: 'All required fields must be provided.' });
+        }
+
+        // Validate specific fields
+        if (isNaN(pincode)) {
+            return res.status(400).json({ error: 'Pincode must be a number.' });
+        }
+        if (isNaN(mobile_num)) {
+            return res.status(400).json({ error: 'Mobile number must be a number.' });
+        }
+
+        // Prepare the data for creation or update
+        const addressData = {
+            pincode,
+            city,
+            state,
+            house_flat_office_no,
+            address,
+            contact_name,
+            mobile_num,
+            address_type,
+            user_id: userId // Assign the user ID
+        };
+
+        // Add landmark if provided
+        if (landmark) {
+            addressData.landmark = landmark;
+        }
+
+        if (addresses_id) {
+            // Check if the address with the given ID exists for the user
+            const existingAddress = await addressUser.findOne({
+                where: {
+                    addresses_id: addresses_id,
+                    user_id: userId // Ensure the address belongs to the user
+                }
+            });
+
+            if (!existingAddress) {
+                return res.status(404).json({ error: 'Address not found or you do not have permission to update it.' });
+            }
+
+            // Update the address
+            existingAddress.set(addressData);
+            await existingAddress.save();
+
+            console.log(existingAddress, 'Updated Address');
+            return res.status(200).json({ message: 'Address updated successfully.', address: existingAddress });
+        } else {
+            // If no `addresses_id`, create a new address
+            const newAddress = await addressUser.create(addressData);
+
+            console.log(newAddress, 'New Address');
+            return res.status(201).json({ message: 'Address created successfully.', address: newAddress });
+        }
+    } catch (error) {
+        console.error('Error in createOrUpdateAddress:', error);
+        res.status(500).json({ error: 'Failed to create or update the address.' });
+    }
+};
+
+const getallUserinfo = async(req, res) => {
+    // console.log('get address api called')
+    try {
+        const addressinfo = await addressUser.findAll()
+        if (!addressinfo) {
+            res.state(203).json({ message: 'record not found' })
+        }
+        // console.log(addressinfo,'addressinfoaddressinfo')
+        res.status(200).json(addressinfo)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
 
 module.exports = {
     createAddress,
     getalladdressinfo,
     editaddress,
-    removeaddress
+    removeaddress,
+    createOrUpdateAddress,
+    getallUserinfo
 }

@@ -32,6 +32,6 @@ route.delete('/api/products/delete/:product_id', productsController.productDelet
 route.get('/api/products/all/filter', productsController.fillterData)
 route.post('/api/products/all/filter/data', userAuth, productsController.fillterDataget)
 route.get('/api/products/all/filter/new', productsController.fillterNewData)
-
+route.put('/api/update/:productId', productsController.editProduct);
 
 module.exports = route

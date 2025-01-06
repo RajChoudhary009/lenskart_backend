@@ -257,6 +257,9 @@ const Addproduct = async (req, res) => {
                 work_for_img: imageUrlWorkFor,
             }] : [];
 
+            const colors = req.body.color ? JSON.parse(req.body.color) : []; // Parse JSON input
+
+
             // Create a new product record in the database
             const data = await products.create({
                 // new update
@@ -274,11 +277,11 @@ const Addproduct = async (req, res) => {
                 lens_type: req.body.lens_type || '',
                 frem_type: req.body.frem_type || '',
                 gender: req.body.gender || '',
-
+                color: req.body.color || '',
                 // Set rating and discount to null if not provided
                 rating: req.body.rating ? req.body.rating : null,
                 discount: req.body.discount ? req.body.discount : null,
-
+                color: colors, // Save directly
                 highlights: req.body.highlights || '',
                 ideal_for: ideal_for.length ? ideal_for : null, // Set to null if no data
                 product_work_for: product_work_for.length ? product_work_for : null, // Set to null if no data
@@ -311,7 +314,7 @@ const getproduct = async (req, res) => {
                 },
             ]
         });
-        const product = limitedData.slice(0, 100).map((item) => item);
+        const product = limitedData.slice(0, 1000).map((item) => item);
 
         return res.status(200).send({
             success: 'success',
@@ -323,41 +326,96 @@ const getproduct = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+// const productdetail = async (req, res) => {
+//     try {
+//         const productId = req.params.productId;
+
+//         let product = await products.findOne({
+//             where: {
+//                 product_id: productId
+//             },
+//             include: [
+//                 {
+//                     model: Specification, // Assuming you have a relationship between Products and Review
+//                 },
+//                 {
+//                     model: offer, // Assuming you have a relationship between Products and Review
+//                 },
+//             ]
+//         })
+
+//         product = JSON.parse(JSON.stringify(product))
+
+//         product.ideal_for = JSON.parse(JSON.stringify(product.ideal_for))
+
+
+//         return res.status(200).send({
+//             success: 'success',
+//             result: product,
+//         });
+
+
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Internal server error' });
+//     }
+// }
 
 const productdetail = async (req, res) => {
     try {
         const productId = req.params.productId;
 
+        if (!productId || isNaN(Number(productId))) {
+            return res.status(400).json({ message: "Invalid product ID" });
+        }
+
+        // Fetch product details
         let product = await products.findOne({
-            where: {
-                product_id: productId
-            },
+            where: { product_id: productId },
             include: [
-                {
-                    model: Specification, // Assuming you have a relationship between Products and Review
-                },
-                {
-                    model: offer, // Assuming you have a relationship between Products and Review
-                },
-            ]
-        })
+                { model: Specification },
+                { model: offer },
+            ],
+        });
 
-        product = JSON.parse(JSON.stringify(product))
+        if (!product) {
+            return res.status(404).send({ success: false, message: 'Product not found' });
+        }
 
-        product.ideal_for = JSON.parse(JSON.stringify(product.ideal_for))
+        product = JSON.parse(JSON.stringify(product));
 
+        const { frem_type, lens_type } = product; // Extract frem_type and lens_type
+
+        // Fetch 4 suggested products based on frem_type or lens_type
+        const suggestedProducts = await products.findAll({
+            where: {
+                product_id: { [Op.ne]: productId }, // Exclude current product
+                ...(product.frem_type || product.lens_type ? {
+                    [Op.or]: [
+                        product.frem_type ? { frem_type: product.frem_type } : {},
+                        product.lens_type ? { lens_type: product.lens_type } : {},
+                    ]
+                } : {}) // Skip filtering if both values are null
+            },
+            limit: 4,
+            order: [['createdAt', 'DESC']],
+        });
+        
 
         return res.status(200).send({
             success: 'success',
             result: product,
+            suggestedProducts: JSON.parse(JSON.stringify(suggestedProducts)),
         });
 
-
     } catch (error) {
-        console.error(error);
+        console.error("Error in product detail:", error);
         return res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
+
+
 
 const productDeleteById = async (req, res) => {
     const productId = req.params.product_id;
@@ -547,9 +605,56 @@ const fillterNewData = async (req, res) => {
     }
 }
 
+const editProduct = async (req, res) => {
+    try {
+        const productId = req.params.productId; // Get the product ID from the URL params
+        console.log("productId1",productId)
+        console.log("first", req.body)
+        const {
+            product_title,
+            gender,
+            lens_type,
+            frem_type,
+            highlights,
+            product_price,
+            count_in_stock,
+            discount,
+            color
+        } = req.body; // Get fields to update from the request body
+
+        const colors = req.body.color ? JSON.parse(req.body.color) : null; // Parse color JSON input if provided
+
+        // // Find the product by ID
+        const product = await products.findByPk(productId);
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // // Update the product's details
+        await product.update({
+            product_title: product_title || product.product_title,
+            product_price: product_price || product.product_price,
+            count_in_stock: count_in_stock || product.count_in_stock,
+            highlights: highlights || product.highlights,
+            color: colors || product.color,
+            lens_type: lens_type || product.lens_type,
+            frem_type: frem_type || product.frem_type,
+            gender: gender || product.gender,
+            discount: discount || product.discount,   
+        });
+
+        // Respond with the updated product details
+        return res.status(200).json({ message: 'Product updated successfully', data: product });
+        // return res.status(200).json({ message: 'Product updated successfully' });
+    } catch (error) {
+        console.error('Error editing product:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
-module.exports = { Addproduct, getproduct, productdetail, fillterData, productDeleteById, fillterDataget, fillterNewData }
+module.exports = { Addproduct, getproduct, productdetail, fillterData, productDeleteById, fillterDataget, fillterNewData, editProduct }
 
 // module.exports = { productsData, getAllData, fillterData, getDataById, productDeleteById, editProductById }
 

@@ -25,6 +25,7 @@ const addvideothumnail = require('./servises/routes/addvideothumnail')
 const offers = require('./servises/routes/offers')
 const review = require('./servises/routes/review')
 const color = require('./servises/routes/color')
+const lenskartPayment = require('./servises/routes/lenskartPayment')
 
 
 testDbConnection();
@@ -51,6 +52,7 @@ app.use('/', products);
 app.use('/', categories);
 app.use('/', subCategories);
 app.use('/', item);
+
 // app.use('/', addtocart);
 app.use('/', brand);
 app.use('/', payment);
@@ -63,7 +65,7 @@ app.use('/', addvideothumnail)
 app.use('/', offers)
 app.use('/', review)
 app.use('./', color)
-
+app.use('/api/payment', lenskartPayment);
 // Routes
 
 app.get('/hello', (req, res)=>{
