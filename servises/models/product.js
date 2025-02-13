@@ -93,11 +93,27 @@ const products = database.define('products', {
         type: DataTypes.JSON,
         allowNull: true  
     },
-    lens_type:{
+    frame_shape:{
         type: DataTypes.STRING,
         allowNull: true,
     },
     frem_type:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    frameDescription:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    lensInformation:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    frameMaterial:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    templeColor:{
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -106,6 +122,14 @@ const products = database.define('products', {
         allowNull: true,
     },
     color: {
+        type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
+        allowNull: true,
+    },
+    frameColor: {
+        type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
+        allowNull: true,
+    },
+    lenshColor: {
         type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
         allowNull: true,
     },

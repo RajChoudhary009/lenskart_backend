@@ -257,8 +257,16 @@ const Addproduct = async (req, res) => {
                 work_for_img: imageUrlWorkFor,
             }] : [];
 
+            
             const colors = req.body.color ? JSON.parse(req.body.color) : []; // Parse JSON input
-
+            const lenshColor = req.body.lenshColor ? JSON.parse(req.body.color) : []; // Parse JSON input
+            // Parse frameColor as an array
+            let frameColor = [];
+            try {
+                frameColor = Array.isArray(req.body.frameColor) ? req.body.frameColor : JSON.parse(req.body.frameColor);
+            } catch (error) {
+                return res.status(400).json({ message: "Invalid frameColor format" });
+            }
 
             // Create a new product record in the database
             const data = await products.create({
@@ -274,7 +282,7 @@ const Addproduct = async (req, res) => {
                 offer: req.body.offer || '',
                 count_in_stock: req.body.count_in_stock || 0, // Default to 0
                 // new update
-                lens_type: req.body.lens_type || '',
+                frame_shape: req.body.frame_shape || '',
                 frem_type: req.body.frem_type || '',
                 gender: req.body.gender || '',
                 color: req.body.color || '',
@@ -282,6 +290,8 @@ const Addproduct = async (req, res) => {
                 rating: req.body.rating ? req.body.rating : null,
                 discount: req.body.discount ? req.body.discount : null,
                 color: colors, // Save directly
+                frameColor: frameColor, // ✅ Properly formatted JSON string
+                lenshColor: lenshColor,
                 highlights: req.body.highlights || '',
                 ideal_for: ideal_for.length ? ideal_for : null, // Set to null if no data
                 product_work_for: product_work_for.length ? product_work_for : null, // Set to null if no data
@@ -290,6 +300,10 @@ const Addproduct = async (req, res) => {
                 brand_name: req.body.brand_name || '',
                 brand_id: req.body.brand_id || null, // Nullable
                 place: req.body.place || '',
+                frameDescription: req.body.frameDescription || '',
+                lensInformation: req.body.lensInformation || '',
+                frameMaterial: req.body.frameMaterial || '',
+                templeColor: req.body.templeColor || '',
             });
 
             return res.json({ message: 'Product added successfully', data: data });
@@ -401,7 +415,7 @@ const productdetail = async (req, res) => {
             limit: 4,
             order: [['createdAt', 'DESC']],
         });
-        
+
 
         return res.status(200).send({
             success: 'success',
@@ -608,7 +622,7 @@ const fillterNewData = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.productId; // Get the product ID from the URL params
-        console.log("productId1",productId)
+        console.log("productId1", productId)
         console.log("first", req.body)
         const {
             product_title,
@@ -641,7 +655,7 @@ const editProduct = async (req, res) => {
             lens_type: lens_type || product.lens_type,
             frem_type: frem_type || product.frem_type,
             gender: gender || product.gender,
-            discount: discount || product.discount,   
+            discount: discount || product.discount,
         });
 
         // Respond with the updated product details
