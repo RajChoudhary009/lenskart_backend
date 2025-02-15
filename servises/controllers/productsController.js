@@ -259,7 +259,16 @@ const Addproduct = async (req, res) => {
 
             
             const colors = req.body.color ? JSON.parse(req.body.color) : []; // Parse JSON input
-            const lenshColor = req.body.lenshColor ? JSON.parse(req.body.color) : []; // Parse JSON input
+            // const lenshColor = req.body.lenshColor ? JSON.parse(req.body.color) : []; // Parse JSON input
+
+            // Parse lenshColor as an array
+            let lenshColor = [];
+            try {
+                lenshColor = Array.isArray(req.body.lenshColor) ? req.body.lenshColor : JSON.parse(req.body.lenshColor);
+            } catch (error) {
+                return res.status(400).json({ message: "Invalid frameColor format" });
+            }
+
             // Parse frameColor as an array
             let frameColor = [];
             try {
@@ -291,7 +300,7 @@ const Addproduct = async (req, res) => {
                 discount: req.body.discount ? req.body.discount : null,
                 color: colors, // Save directly
                 frameColor: frameColor, // ✅ Properly formatted JSON string
-                lenshColor: lenshColor,
+                lenshColor: lenshColor, // ✅ Properly formatted JSON string
                 highlights: req.body.highlights || '',
                 ideal_for: ideal_for.length ? ideal_for : null, // Set to null if no data
                 product_work_for: product_work_for.length ? product_work_for : null, // Set to null if no data
