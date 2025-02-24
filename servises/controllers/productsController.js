@@ -259,23 +259,22 @@ const Addproduct = async (req, res) => {
 
             
             const colors = req.body.color ? JSON.parse(req.body.color) : []; // Parse JSON input
-            // const lenshColor = req.body.lenshColor ? JSON.parse(req.body.color) : []; // Parse JSON input
-
+            
             // Parse lenshColor as an array
-            let lenshColor = [];
-            try {
-                lenshColor = Array.isArray(req.body.lenshColor) ? req.body.lenshColor : JSON.parse(req.body.lenshColor);
-            } catch (error) {
-                return res.status(400).json({ message: "Invalid frameColor format" });
-            }
+            // let lenshColor = [];
+            // try {
+            //     lenshColor = Array.isArray(req.body.lenshColor) ? req.body.lenshColor : JSON.parse(req.body.lenshColor);
+            // } catch (error) {
+            //     return res.status(400).json({ message: "Invalid frameColor format" });
+            // }
 
             // Parse frameColor as an array
-            let frameColor = [];
-            try {
-                frameColor = Array.isArray(req.body.frameColor) ? req.body.frameColor : JSON.parse(req.body.frameColor);
-            } catch (error) {
-                return res.status(400).json({ message: "Invalid frameColor format" });
-            }
+            // let frameColor = [];
+            // try {
+            //     frameColor = Array.isArray(req.body.frameColor) ? req.body.frameColor : JSON.parse(req.body.frameColor);
+            // } catch (error) {
+            //     return res.status(400).json({ message: "Invalid frameColor format" });
+            // }
 
             // Create a new product record in the database
             const data = await products.create({
@@ -299,8 +298,8 @@ const Addproduct = async (req, res) => {
                 rating: req.body.rating ? req.body.rating : null,
                 discount: req.body.discount ? req.body.discount : null,
                 color: colors, // Save directly
-                frameColor: frameColor, // ✅ Properly formatted JSON string
-                lenshColor: lenshColor, // ✅ Properly formatted JSON string
+                frameColor: req.body.frameColor, 
+                lenshColor: req.body.lenshColor, 
                 highlights: req.body.highlights || '',
                 ideal_for: ideal_for.length ? ideal_for : null, // Set to null if no data
                 product_work_for: product_work_for.length ? product_work_for : null, // Set to null if no data

@@ -126,11 +126,11 @@ const products = database.define('products', {
         allowNull: true,
     },
     frameColor: {
-        type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
+        type: DataTypes.STRING, // Replace STRING with the appropriate data type for your array elements
         allowNull: true,
     },
     lenshColor: {
-        type: DataTypes.JSON, // Replace STRING with the appropriate data type for your array elements
+        type: DataTypes.STRING, // Replace STRING with the appropriate data type for your array elements
         allowNull: true,
     },
     createdAt: {

@@ -91,7 +91,7 @@ const varifyLenskartPayment = async (req, res) => {
     const { add, axis, leftLens, rightLens, selectedLensOrProducrPrice, selectLansType, selectedType } = power;
     const { CYL: leftCyl, SPH: leftSph } = leftLens || {};
     const { CYL: rightCyl, SPH: rightSph } = rightLens || {};
-    const { mobile_number, product_id } = product;
+    const { mobile_number, product_id, selectedColor } = product;
     console.log("selectedLensOrProducrPrice", selectedLensOrProducrPrice)
     try {
         // Verify Razorpay Signature
@@ -128,7 +128,9 @@ const varifyLenskartPayment = async (req, res) => {
                 selected_type: selectedType,
                 mobile_number: mobile_number,
                 product_id: product_id,
-                delivery_status: "Processing"
+                delivery_status: "Processing",
+                frem_color:selectedColor.frameName,
+                lens_color:selectedColor.lensName,
             }, { transaction });
         });
 
