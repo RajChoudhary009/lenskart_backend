@@ -15,10 +15,15 @@ const brand = database.define('brand', {
         allowNull: false
     },
 
-    brand_type: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
+    section:{
+        type:DataTypes.STRING,
+        allowNull: false,
+    },
+    
+    place:{
+        type:DataTypes.STRING,
+        allowNull: false,
+    },
 
 }, {
     timestamps: false,

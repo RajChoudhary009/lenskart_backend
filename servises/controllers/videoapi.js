@@ -4,8 +4,6 @@ const multer = require('multer');
 const Sequelize = require('sequelize');
 const { fn, col, literal } = Sequelize;
 const path = require('path');
-// const { exec } = require('child_process');
-// const ffmpeg = require('fluent-ffmpeg');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -54,35 +52,35 @@ const getvideo = async (req, res) => {
     console.log('INFO -> getvideo INFO API CALLED')
 
 
-    try {
-        const videos = await Video.findAll();
-        console.log(videos)
-        res.json({ videos });
+    // try {
+    //     const videos = await Video.findAll();
+    //     console.log(videos)
+    //     res.json({ videos });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error', error: error });
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).json({ message: 'Internal server error', error: error });
 
-    }
+    // }
 }
 
 const getvideoinfobyVideothumnail_id = async (req, res) => {
     console.log('INFO -> getvideoinfobyVideothumnail_id INFO API CALLED')
-    try {
-        const { Videothumnail_id } = req.params
-        const allvideo = await Video.findAll({
-            where: {
-                Videothumnail_id: Videothumnail_id
-            }
-        });
-        console.log(allvideo)
-        res.json({ allvideo });
+    // try {
+    //     const { Videothumnail_id } = req.params
+    //     const allvideo = await Video.findAll({
+    //         where: {
+    //             Videothumnail_id: Videothumnail_id
+    //         }
+    //     });
+    //     console.log(allvideo)
+    //     res.json({ allvideo });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error', error: error });
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).json({ message: 'Internal server error', error: error });
 
-    }
+    // }
 }
 
 module.exports = {

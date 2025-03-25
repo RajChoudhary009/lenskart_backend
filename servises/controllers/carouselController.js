@@ -1,39 +1,76 @@
 const { Op } = require('sequelize');
 const carousel = require('../models/carousel');
 
+// const banner = async (req, res) => {
+//     const product_categories = req.body.product_categories;
+//     const brand_name = req.body.brand_name;
+//     const place = req.body.place;
+//     const exact_place = req.body.exact_place;
+//     const image_url = req.file ? req.file.filename : null;
+
+//     console.log(product_categories)
+//     console.log(brand_name)
+//     console.log(place)
+//     console.log(exact_place)
+//     console.log(image_url)
+
+//     try {
+//         // Check if all required fields are provided
+//         // if (!product_categories || !brand_name || !place || !image_url) {
+//         //     return res.status(400).json({ error: 'Missing required fields' });
+//         // }
+
+//         if (!exact_place || !place || !image_url) {
+//             return res.status(400).json({ error: 'Missing required fields' });
+//         }
+
+//         // Create a new carousel banner
+//         const data = await carousel.create({
+//             product_categories,
+//             brand_name,
+//             place,
+//             exact_place,
+//             image_url,
+//         });
+
+//         // Respond with the created banner
+//         res.status(200).send(data);
+//     } catch (error) {
+//         console.error('Error creating carousel banner:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+
+// }
+
 const banner = async (req, res) => {
-    const product_categories = req.body.product_categories;
-    const brand_name = req.body.brand_name;
-    const place = req.body.place;
-    const image_url = req.file ? req.file.filename : null;
-
-    // console.log(product_categories)
-    // console.log(brand_name)
-    // console.log(place)
-    // console.log(image_url)
-
     try {
-        // Check if all required fields are provided
-        if (!product_categories || !brand_name || !place || !image_url) {
-            return res.status(400).json({ error: 'Missing required fields' });
+        const { product_categories, section, brand_name, place, exact_place } = req.body;
+        const image_url = req.file ? req.file.filename : null;
+
+        console.log(product_categories, brand_name, place, exact_place, image_url);
+
+        // Check if required fields are present
+        if (!section || !place || !exact_place || !image_url) {
+            return res.status(400).json({ error: 'Missing required fields: place, exact_place, or image_url' });
         }
 
-        // Create a new carousel banner
+        // Create new carousel banner
         const data = await carousel.create({
-            product_categories,
-            brand_name,
+            product_categories: product_categories || "", // Ensure empty string if undefined
+            section,
+            brand_name: brand_name || "", 
             place,
-            image_url,
+            exact_place,
+            image_url
         });
 
-        // Respond with the created banner
-        res.status(200).send(data);
+        return res.status(201).json({ success: true, message: "Banner created successfully!", data });
     } catch (error) {
-        console.error('Error creating carousel banner:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error creating carousel banner:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
+};
 
-}
 
 const getAllData = async (req, res) => {
     try {
@@ -95,10 +132,10 @@ const deleteBannerById = async (req, res) => {
 const editBannerById = async (req, res) => {
     console.log("edit Api")
     const bannerId = req.params.id;
-    const { product_categories, brand_name, place} = req.body;
+    const { product_categories, section, brand_name, place, exact_place} = req.body;
     const image_url = req.file ? req.file.filename : null;
     // console.log(req.body.product_categories)
-    // console.log(product_categories)
+    // console.log(exact_place)
     // console.log(place)
     // console.log(image_url)
     // console.log(brand_name)
@@ -115,8 +152,10 @@ const editBannerById = async (req, res) => {
         // Update the banner's properties
         await carousel.update({
             product_categories,
+            section,
             brand_name,
             place,
+            exact_place,
             image_url,
         }, {
             where: {

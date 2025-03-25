@@ -6,9 +6,5 @@ const cetegories = database.define('cetegories', {
         type:DataTypes.STRING,
         allowNull: false,
     },
-    categories_id:{
-        type:DataTypes.INTEGER,
-        allowNull: false,
-    },
 })
 module.exports = cetegories;

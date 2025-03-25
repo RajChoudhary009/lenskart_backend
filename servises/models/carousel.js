@@ -4,13 +4,21 @@ const {database} = require("../connection/database"); // Import your Sequelize i
 const carousel = database.define('carousel',{
     product_categories:{
         type:DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     brand_name:{
+        type:DataTypes.STRING,
+        allowNull: true,
+    },
+    section:{
         type:DataTypes.STRING,
         allowNull: false,
     },
     place:{
+        type:DataTypes.STRING,
+        allowNull: false,
+    },
+    exact_place:{
         type:DataTypes.STRING,
         allowNull: false,
     },

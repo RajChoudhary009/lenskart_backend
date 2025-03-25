@@ -6,19 +6,19 @@ const product = require('../models/product');
 
 const Addbrand = async (req, res) => {
     try {
-        const { brand_name, brand_type } = req.body;
-        console.log(brand_name,'bbbb')
-        console.log(brand_type,'bbbb')
+        const { brand_name, section, place } = req.body;
 
         // Check if brand_name and brand_type are present in req.body
-        if (!brand_name || !brand_type) {
+        if (!brand_name || !section || !place) {
             return res.status(400).json({ message: 'Both brand_name and brand_type are required fields' });
         }
 
         const result = await brand.create({
             brand_name: brand_name,
-            brand_type: brand_type
+            section: section,
+            place: place
         });
+
         // console.log(JSON.parse(JSON.stringify(result)))
         res.status(201).json({
             msg: 'success post',
@@ -109,8 +109,12 @@ const deleteBrandProduct = async(req, res) => {
 
 const editBrandProduct = async(req, res) => {
     const brand_id = req.params.brand_id;
-
-    const { brand_name, brand_type } = req.body;
+    
+    const { brand_name, section, place } = req.body;
+    console.log("first", brand_name)
+    console.log("section", section)
+    console.log("place", place)
+    
     try {
         const data = await brand.findByPk(brand_id)
         if(!data){
@@ -118,7 +122,8 @@ const editBrandProduct = async(req, res) => {
         }
         await brand.update({
             brand_name,
-            brand_type,
+            section,
+            place
         }, {where: {brand_id: brand_id}})
 
         const updatedItem = await brand.findByPk(brand_id)

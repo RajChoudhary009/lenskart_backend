@@ -3,20 +3,16 @@ const cetegories = require('../models/categories')
 const postCategories = async (req, res) => {
     console.log("api categoris")
     const categories_name = req.body.categories_name;
-    const categories_id = req.body.categories_id;
-    console.log(categories_name)
-    console.log(categories_id)
 
     try {
         // Check if all required fields are provided
-        if (!categories_name || !categories_id ) {
+        if (!categories_name ) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
         // Create a new carousel banner
         const data = await cetegories.create({
             categories_name,
-            categories_id,
         });
 
         // Respond with the created banner
@@ -25,7 +21,6 @@ const postCategories = async (req, res) => {
         console.error('Error creating cetogiries table:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-
 }
 
 const getCategories = async (req, res) => {
